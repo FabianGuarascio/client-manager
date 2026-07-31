@@ -34,5 +34,39 @@ $client-manager-dark-theme: mat.define-dark-theme((
   color: rgba(255, 255, 255, 0.87);
 }
 
+// Los <a> no forman parte de los componentes de Material, así que su color
+// no cambia solo con all-component-colors: hay que fijarlo a mano por tema
+// para que sean legibles contra el fondo claro/oscuro.
+a {
+  color: mat.get-color-from-palette($client-manager-primary, 700);
+}
+
+.dark-theme a {
+  color: mat.get-color-from-palette($client-manager-primary, 100);
+}
+
+// El texto de los inputs se ve corrido hacia arriba dentro del box: Material
+// centra el infix por line-height, pero esa línea reserva espacio para
+// descendentes tipográficos (g, y, j) que un texto como "6/3/2003" no usa,
+// dejando ese espacio vacío abajo. Centramos el infix por flexbox y
+// achicamos el line-height para reducir ese espacio reservado.
+.mat-mdc-form-field-infix {
+  display: flex;
+  align-items: center;
+}
+
+.mat-mdc-form-field .mat-mdc-input-element {
+  line-height: 1.25;
+}
+
+// Angular Material deja la label sin foco al 60% de opacidad en el tema
+// oscuro (pensado para fondos más claros que el #303030 que usamos acá),
+// lo que la vuelve difícil de leer. La subimos al 87%, igual que el resto
+// del texto del body, sin tocar los estados de foco/error/disabled (que
+// tienen sus propias reglas, más específicas o posteriores).
+.dark-theme .mdc-text-field:not(.mdc-text-field--disabled) .mdc-floating-label {
+  color: rgba(255, 255, 255, 0.87);
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
