@@ -18,12 +18,23 @@
   flex: 1 1 280px;
 }
 
+.table-scroll {
+  overflow-x: auto;
+}
+
 .clientes-table {
   width: 100%;
+  min-width: 500px;
 }
 
 .no-data {
   text-align: center;
   padding: 24px;
   color: rgba(0, 0, 0, 0.6);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
 }

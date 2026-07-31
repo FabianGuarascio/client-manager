@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -17,14 +17,27 @@ import { ClienteService } from '../cliente.service';
   templateUrl: './cliente-list.component.html',
   styleUrls: ['./cliente-list.component.scss']
 })
-export class ClienteListComponent implements AfterViewInit, OnDestroy {
+export class ClienteListComponent implements OnDestroy {
   readonly columnas = ['nombre', 'apellido', 'edad', 'fechaNacimiento'];
   readonly dataSource = new MatTableDataSource<Cliente>([]);
 
   clientes: Cliente[] = [];
+  cargando = true;
 
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  // La tabla vive detrás de *ngIf="!cargando", así que MatSort/MatPaginator
+  // no existen todavía cuando corre ngAfterViewInit (el spinner se muestra
+  // primero). Con setters se conectan apenas Angular los crea, sea cuando sea.
+  @ViewChild(MatSort) set sort(sort: MatSort) {
+    if (sort) {
+      this.dataSource.sort = sort;
+    }
+  }
+
+  @ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
+    if (paginator) {
+      this.dataSource.paginator = paginator;
+    }
+  }
 
   private readonly subscription: Subscription;
 
@@ -32,12 +45,8 @@ export class ClienteListComponent implements AfterViewInit, OnDestroy {
     this.subscription = this.clienteService.getAll().subscribe((clientes) => {
       this.clientes = clientes;
       this.dataSource.data = clientes;
+      this.cargando = false;
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
   }
 
   ngOnDestroy(): void {

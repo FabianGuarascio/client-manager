@@ -1,27 +1,86 @@
-# ClientManager
+# Client Manager
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.11.
+Aplicación Angular 15 + Firebase para el alta, listado y análisis estadístico
+de clientes. Desarrollada como parte de un challenge técnico.
 
-## Development server
+**App en producción:** https://client-manager-82a35.web.app
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Stack
 
-## Code scaffolding
+- **Angular 15** (NgModules, Reactive Forms)
+- **Angular Material** para la UI
+- **Firebase Firestore** para persistencia de clientes
+- **Firebase Authentication** (Email/Password) para proteger rutas y acciones
+- **Firebase Hosting** + **GitHub Actions** para el deploy (automático en cada
+  push a `main`)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Funcionalidad
 
-## Build
+- Registro/login de usuarios (Firebase Auth). Las rutas `/clientes` y
+  `/clientes/nuevo` están protegidas por `AuthGuard` y las Firestore
+  Security Rules exigen `request.auth != null`.
+- Alta de clientes (nombre, apellido, edad, fecha de nacimiento) con
+  validaciones avanzadas:
+  - Nombre/apellido: solo letras (con acentos/ñ).
+  - Edad: entre 0 y 120.
+  - Fecha de nacimiento: no puede ser futura.
+  - Validador cruzado: la edad ingresada debe coincidir con los años
+    cumplidos según la fecha de nacimiento.
+- Listado de clientes con filtro por texto, orden por columna
+  (`mat-sort`) y paginación.
+- Pipes personalizados: `fechaFormato` (fecha en español, ej. "15 de marzo
+  de 1990") y `capitalizar` (normaliza nombre/apellido al mostrarlos).
+- Estadísticas de edad (promedio y desvío estándar **muestral**, es decir
+  dividiendo por `n-1`: se trata a los clientes registrados como una
+  muestra, no como la población completa) — se recalculan en tiempo real
+  con la lista de clientes y se muestran arriba del listado.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Desarrollo local
 
-## Running unit tests
+```bash
+npm install
+ng serve
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Abrir `http://localhost:4200/`. La app usa el proyecto de Firebase real
+(`client-manager-82a35`) tanto en desarrollo como en producción — no hay un
+proyecto de Firebase separado para dev.
 
-## Running end-to-end tests
+## Tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```bash
+ng test --watch=false --browsers=ChromeHeadless
+```
 
-## Further help
+Cubre los validadores custom del formulario de alta, el cálculo de
+estadísticas, y los componentes de auth/listado.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Build y deploy
+
+```bash
+ng build                              # build de producción (configuración default)
+firebase deploy --only hosting,firestore:rules
+```
+
+El deploy también corre automáticamente vía GitHub Actions
+(`.github/workflows/firebase-hosting-merge.yml`) en cada push a `main`, y
+genera un preview channel en cada Pull Request.
+
+## Decisiones de diseño
+
+- **Desvío estándar muestral (n-1)**, no poblacional: los clientes
+  registrados son una muestra, no la población completa de clientes
+  posibles.
+- **AngularFire pineado a 7.6.1** (con `firebase@^9.23.0`): es la última
+  versión de AngularFire compatible con Angular 15/16 — las versiones más
+  nuevas requieren Angular 20+.
+- **API `compat` de AngularFire** (no la API modular v9): coherente con esa
+  versión de AngularFire. Como trade-off, el bundle inicial pesa ~1.4MB
+  (todo el SDK de Firebase incluido), por eso el budget de `angular.json`
+  está en 1MB warning / 2MB error en vez del default de Angular.
+- **Estadísticas embebidas en `/clientes`** en vez de una ruta separada: son
+  dos requisitos chicos y relacionados del challenge (listado + análisis de
+  datos), separarlos hubiera fragmentado la navegación sin agregar valor.
+- **`skipLibCheck: true`** en `tsconfig.json`: workaround necesario para un
+  bug de tipos conocido en los `.d.ts` de `@angular/fire@7.6.1/compat/firestore`
+  contra TypeScript 4.9 (no es un problema del código de este proyecto).
