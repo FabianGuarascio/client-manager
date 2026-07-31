@@ -1,4 +1,38 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Mismas paletas que el prebuilt theme "indigo-pink" que traía Angular
+// Material por default, pero definidas acá para poder derivar una versión
+// dark sin depender de un segundo archivo CSS prebuilt.
+$client-manager-primary: mat.define-palette(mat.$indigo-palette);
+$client-manager-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$client-manager-warn: mat.define-palette(mat.$red-palette);
+
+$client-manager-light-theme: mat.define-light-theme((
+  color: (
+    primary: $client-manager-primary,
+    accent: $client-manager-accent,
+    warn: $client-manager-warn,
+  )
+));
+
+$client-manager-dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $client-manager-primary,
+    accent: $client-manager-accent,
+    warn: $client-manager-warn,
+  )
+));
+
+@include mat.all-component-themes($client-manager-light-theme);
+
+// Se activa agregando la clase "dark-theme" al <body> (ver AppComponent).
+.dark-theme {
+  @include mat.all-component-colors($client-manager-dark-theme);
+  background-color: #303030;
+  color: rgba(255, 255, 255, 0.87);
+}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
