@@ -12,12 +12,15 @@ import { environment } from '../environments/environment';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { SharedMaterialModule } from './shared/material.module';
+import { PipesModule } from './pipes/pipes.module';
+import { ClienteFormComponent } from './features/clientes/cliente-form/cliente-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    ClienteFormComponent
   ],
   imports: [
     BrowserModule,
@@ -25,6 +28,7 @@ import { SharedMaterialModule } from './shared/material.module';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     SharedMaterialModule,
+    PipesModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule
