@@ -1,0 +1,29 @@
+<div class="auth-page">
+  <mat-card class="auth-card">
+    <mat-card-title>Iniciar sesión</mat-card-title>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="email" />
+        <mat-error *ngIf="form.get('email')?.hasError('required')">El email es obligatorio.</mat-error>
+        <mat-error *ngIf="form.get('email')?.hasError('email')">Ingresá un email válido.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" formControlName="password" autocomplete="current-password" />
+        <mat-error *ngIf="form.get('password')?.hasError('required')">La contraseña es obligatoria.</mat-error>
+        <mat-error *ngIf="form.get('password')?.hasError('minlength')">Mínimo 6 caracteres.</mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="loading">
+        Ingresar
+      </button>
+    </form>
+
+    <p class="switch-link">
+      ¿No tenés cuenta? <a routerLink="/register">Registrate</a>
+    </p>
+  </mat-card>
+</div>
