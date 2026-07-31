@@ -1,5 +1,6 @@
 <mat-card class="form-card">
   <mat-card-title>Nuevo cliente</mat-card-title>
+  <a routerLink="/clientes" class="back-link">&larr; Volver al listado</a>
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <mat-form-field appearance="outline" class="full-width">

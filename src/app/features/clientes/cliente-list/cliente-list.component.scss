@@ -1,0 +1,29 @@
+.page {
+  padding: 16px;
+}
+
+.list-card {
+  padding: 16px;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-field {
+  flex: 1 1 280px;
+}
+
+.clientes-table {
+  width: 100%;
+}
+
+.no-data {
+  text-align: center;
+  padding: 24px;
+  color: rgba(0, 0, 0, 0.6);
+}

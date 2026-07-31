@@ -1,5 +1,10 @@
 <mat-toolbar color="primary">
   <span>Client Manager</span>
+
+  <ng-container *ngIf="user$ | async as user">
+    <a mat-button routerLink="/clientes">Clientes</a>
+  </ng-container>
+
   <span class="spacer"></span>
 
   <ng-container *ngIf="user$ | async as user; else loggedOut">

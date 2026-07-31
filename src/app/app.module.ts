@@ -14,13 +14,17 @@ import { RegisterComponent } from './features/auth/register/register.component';
 import { SharedMaterialModule } from './shared/material.module';
 import { PipesModule } from './pipes/pipes.module';
 import { ClienteFormComponent } from './features/clientes/cliente-form/cliente-form.component';
+import { EstadisticasComponent } from './features/estadisticas/estadisticas/estadisticas.component';
+import { ClienteListComponent } from './features/clientes/cliente-list/cliente-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    ClienteFormComponent
+    ClienteFormComponent,
+    EstadisticasComponent,
+    ClienteListComponent
   ],
   imports: [
     BrowserModule,
