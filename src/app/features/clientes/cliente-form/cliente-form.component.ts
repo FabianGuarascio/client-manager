@@ -1,29 +1,44 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ClienteService } from '../cliente.service';
 import {
   fechaNoFuturaValidator,
   soloLetrasValidator,
 } from '../../../shared/validators/cliente.validators';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { NgIf } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { RouterLink } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-cliente-form',
   templateUrl: './cliente-form.component.html',
   styleUrls: ['./cliente-form.component.scss'],
+  standalone: true,
+  imports: [
+    MatCardModule,
+    RouterLink,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    NgIf,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+    MatSnackBarModule,
+  ],
 })
 export class ClienteFormComponent {
   readonly hoy = new Date();
 
   readonly form: FormGroup = this.fb.group({
-    nombre: [
-      '',
-      [Validators.required, Validators.minLength(2), soloLetrasValidator],
-    ],
-    apellido: [
-      '',
-      [Validators.required, Validators.minLength(2), soloLetrasValidator],
-    ],
+    nombre: ['', [Validators.required, Validators.minLength(2), soloLetrasValidator]],
+    apellido: ['', [Validators.required, Validators.minLength(2), soloLetrasValidator]],
     edad: [
       { value: '', disabled: true },
       [Validators.required, Validators.min(0), Validators.max(120)],
@@ -40,9 +55,7 @@ export class ClienteFormComponent {
   ) {
     this.form.get('fechaNacimiento')!.valueChanges.subscribe((value) => {
       const edad = this.calcularEdad(value);
-      this.form
-        .get('edad')!
-        .setValue(edad ?? '', { emitEvent: false });
+      this.form.get('edad')!.setValue(edad ?? '', { emitEvent: false });
     });
   }
 
@@ -52,9 +65,7 @@ export class ClienteFormComponent {
    */
   private calcularEdad(fechaNacimiento: unknown): number | null {
     const fecha =
-      fechaNacimiento instanceof Date
-        ? fechaNacimiento
-        : new Date(fechaNacimiento as string);
+      fechaNacimiento instanceof Date ? fechaNacimiento : new Date(fechaNacimiento as string);
 
     if (!fechaNacimiento || isNaN(fecha.getTime()) || fecha > this.hoy) {
       return null;
@@ -63,8 +74,7 @@ export class ClienteFormComponent {
     let edad = this.hoy.getFullYear() - fecha.getFullYear();
     const noCumplioAun =
       this.hoy.getMonth() < fecha.getMonth() ||
-      (this.hoy.getMonth() === fecha.getMonth() &&
-        this.hoy.getDate() < fecha.getDate());
+      (this.hoy.getMonth() === fecha.getMonth() && this.hoy.getDate() < fecha.getDate());
     if (noCumplioAun) {
       edad--;
     }
@@ -82,9 +92,7 @@ export class ClienteFormComponent {
     const { nombre, apellido, fechaNacimiento } = this.form.value;
     const { edad } = this.form.getRawValue();
     const fecha: Date =
-      fechaNacimiento instanceof Date
-        ? fechaNacimiento
-        : new Date(fechaNacimiento);
+      fechaNacimiento instanceof Date ? fechaNacimiento : new Date(fechaNacimiento);
 
     try {
       await this.clienteService.create({
@@ -98,11 +106,9 @@ export class ClienteFormComponent {
       });
       this.form.reset();
     } catch (error) {
-      this.snackBar.open(
-        'No se pudo registrar el cliente. Intentá de nuevo.',
-        'Cerrar',
-        { duration: 4000 },
-      );
+      this.snackBar.open('No se pudo registrar el cliente. Intentá de nuevo.', 'Cerrar', {
+        duration: 4000,
+      });
     } finally {
       this.saving = false;
     }

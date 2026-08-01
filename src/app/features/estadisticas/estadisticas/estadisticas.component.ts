@@ -1,6 +1,8 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { Cliente } from '../../../models/cliente.model';
 import { EstadisticasService } from '../estadisticas.service';
+import { DecimalPipe } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
 
 /**
  * Muestra promedio y desvío estándar de las edades de la lista de clientes
@@ -9,7 +11,9 @@ import { EstadisticasService } from '../estadisticas.service';
 @Component({
   selector: 'app-estadisticas',
   templateUrl: './estadisticas.component.html',
-  styleUrls: ['./estadisticas.component.scss']
+  styleUrls: ['./estadisticas.component.scss'],
+  standalone: true,
+  imports: [MatCardModule, DecimalPipe],
 })
 export class EstadisticasComponent implements OnChanges {
   @Input() clientes: Cliente[] = [];

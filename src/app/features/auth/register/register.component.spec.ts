@@ -5,7 +5,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../../core/auth/auth.service';
-import { SharedMaterialModule } from '../../../shared/material.module';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -13,9 +12,8 @@ describe('RegisterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, RouterTestingModule, SharedMaterialModule, NoopAnimationsModule],
-      declarations: [RegisterComponent],
-      providers: [{ provide: AuthService, useValue: { register: () => Promise.resolve() } }]
+      imports: [ReactiveFormsModule, RouterTestingModule, NoopAnimationsModule, RegisterComponent],
+      providers: [{ provide: AuthService, useValue: { register: () => Promise.resolve() } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RegisterComponent);

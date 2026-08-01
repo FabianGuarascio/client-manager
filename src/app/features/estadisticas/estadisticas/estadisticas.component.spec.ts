@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EstadisticasComponent } from './estadisticas.component';
-import { SharedMaterialModule } from '../../../shared/material.module';
 
 describe('EstadisticasComponent', () => {
   let component: EstadisticasComponent;
@@ -9,8 +8,7 @@ describe('EstadisticasComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SharedMaterialModule],
-      declarations: [EstadisticasComponent]
+      imports: [EstadisticasComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EstadisticasComponent);
@@ -25,7 +23,7 @@ describe('EstadisticasComponent', () => {
   it('should recompute stats when clientes changes', () => {
     component.clientes = [
       { nombre: 'A', apellido: 'A', edad: 20, fechaNacimiento: '2000-01-01' },
-      { nombre: 'B', apellido: 'B', edad: 30, fechaNacimiento: '1990-01-01' }
+      { nombre: 'B', apellido: 'B', edad: 30, fechaNacimiento: '1990-01-01' },
     ];
     component.ngOnChanges();
     expect(component.promedio).toBe(25);

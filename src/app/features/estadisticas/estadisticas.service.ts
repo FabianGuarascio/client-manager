@@ -20,7 +20,10 @@ export class EstadisticasService {
       return 0;
     }
     const promedio = this.promedioEdad(edades);
-    const sumaDiferenciasCuadradas = edades.reduce((suma, edad) => suma + Math.pow(edad - promedio, 2), 0);
+    const sumaDiferenciasCuadradas = edades.reduce(
+      (suma, edad) => suma + Math.pow(edad - promedio, 2),
+      0,
+    );
     return Math.sqrt(sumaDiferenciasCuadradas / (edades.length - 1));
   }
 }

@@ -6,13 +6,16 @@ import { Pipe, PipeTransform } from '@angular/core';
  *
  * @example {{ cliente.fechaNacimiento | fechaFormato }}
  */
-@Pipe({ name: 'fechaFormato' })
+@Pipe({
+  name: 'fechaFormato',
+  standalone: true,
+})
 export class FechaFormatoPipe implements PipeTransform {
   private readonly formatter = new Intl.DateTimeFormat('es-AR', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-    timeZone: 'UTC'
+    timeZone: 'UTC',
   });
 
   transform(value: string | Date | null | undefined): string {

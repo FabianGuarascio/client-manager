@@ -29,8 +29,7 @@ export function calcularEdad(fechaNacimiento: Date): number {
   let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
   const aunNoCumplioEsteAnio =
     hoy.getMonth() < fechaNacimiento.getMonth() ||
-    (hoy.getMonth() === fechaNacimiento.getMonth() &&
-      hoy.getDate() < fechaNacimiento.getDate());
+    (hoy.getMonth() === fechaNacimiento.getMonth() && hoy.getDate() < fechaNacimiento.getDate());
   if (aunNoCumplioEsteAnio) {
     edad--;
   }
