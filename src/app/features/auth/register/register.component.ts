@@ -16,6 +16,7 @@ import { AsyncPipe, NgIf } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
+import { GoogleSignInButtonComponent } from '../../../shared/components/google-sign-in-button/google-sign-in-button.component';
 
 /** Valida que password y confirmPassword coincidan. */
 function passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
@@ -39,6 +40,7 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
     MatButtonModule,
     RouterLink,
     MatSnackBarModule,
+    GoogleSignInButtonComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -76,6 +78,21 @@ export class RegisterComponent {
       this.router.navigateByUrl('/clientes');
     } catch (error) {
       this.snackBar.open('No se pudo crear la cuenta. Probá con otro email.', 'Cerrar', {
+        duration: 4000,
+      });
+    } finally {
+      this.loadingSubject.next(false);
+    }
+  }
+
+  async continueWithGoogle(): Promise<void> {
+    this.loadingSubject.next(true);
+
+    try {
+      await this.authService.loginWithGoogle();
+      this.router.navigateByUrl('/clientes');
+    } catch (error) {
+      this.snackBar.open('No se pudo iniciar sesión con Google. Intentá de nuevo.', 'Cerrar', {
         duration: 4000,
       });
     } finally {

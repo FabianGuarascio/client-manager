@@ -26,6 +26,11 @@ export class AuthService {
     await this.afAuth.createUserWithEmailAndPassword(email, password);
   }
 
+  /** Login/registro con Google vía popup — si el usuario no existe, Firebase lo crea. */
+  async loginWithGoogle(): Promise<void> {
+    await this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  }
+
   async logout(): Promise<void> {
     await this.afAuth.signOut();
   }

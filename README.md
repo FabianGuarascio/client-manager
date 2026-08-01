@@ -10,15 +10,17 @@ de clientes. Desarrollada como parte de un challenge técnico.
 - **Angular 15** (Standalone Components, Reactive Forms)
 - **Angular Material** para la UI
 - **Firebase Firestore** para persistencia de clientes
-- **Firebase Authentication** (Email/Password) para proteger rutas y acciones
+- **Firebase Authentication** (Email/Password y Google) para proteger rutas y
+  acciones
 - **Firebase Hosting** + **GitHub Actions** para el deploy (automático en cada
   push a `main`)
 
 ## Funcionalidad
 
-- Registro/login de usuarios (Firebase Auth). Las rutas `/clientes` y
-  `/clientes/nuevo` están protegidas por `AuthGuard` y las Firestore
-  Security Rules exigen `request.auth != null`.
+- Registro/login de usuarios con email/contraseña o con Google (Firebase
+  Auth, popup). Las rutas `/clientes` y `/clientes/nuevo` están protegidas
+  por `AuthGuard` y las Firestore Security Rules exigen
+  `request.auth != null`.
 - Alta de clientes (nombre, apellido, edad, fecha de nacimiento) con
   validaciones avanzadas:
   - Nombre/apellido: solo letras (con acentos/ñ).
