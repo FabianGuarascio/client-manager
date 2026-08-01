@@ -1,5 +1,11 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormGroupDirective,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ClienteService } from '../cliente.service';
 import {
@@ -34,6 +40,13 @@ import { MatCardModule } from '@angular/material/card';
   ],
 })
 export class ClienteFormComponent {
+  // El ErrorStateMatcher default de Material marca un control en error si
+  // está inválido O si el form ya fue "submitted" — ese flag lo lleva el
+  // FormGroupDirective, no el FormGroup, así que `form.reset()` no lo limpia.
+  // Hay que resetear vía la directiva para que los campos vuelvan a verse
+  // neutros después de guardar.
+  @ViewChild(FormGroupDirective) private formDirective!: FormGroupDirective;
+
   readonly hoy = new Date();
 
   readonly form: FormGroup = this.fb.group({
@@ -103,11 +116,13 @@ export class ClienteFormComponent {
       });
       this.snackBar.open('Cliente registrado con éxito.', 'Cerrar', {
         duration: 3000,
+        panelClass: 'snackbar-success',
       });
-      this.form.reset();
+      this.formDirective.resetForm();
     } catch (error) {
       this.snackBar.open('No se pudo registrar el cliente. Intentá de nuevo.', 'Cerrar', {
         duration: 4000,
+        panelClass: 'snackbar-error',
       });
     } finally {
       this.saving = false;

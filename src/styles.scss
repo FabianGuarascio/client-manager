@@ -72,6 +72,21 @@ a {
   color: rgba(255, 255, 255, 0.87);
 }
 
+// Feedback de éxito/error en MatSnackBar: por defecto usa el estilo neutro
+// (gris) del tema para cualquier mensaje. Estas clases se pasan por
+// panelClass y sobreescriben los custom properties MDC del snackbar.
+.mat-mdc-snack-bar-container.snackbar-success {
+  --mdc-snackbar-container-color: #2e7d32;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-mdc-snack-bar-button-color: #ffffff;
+}
+
+.mat-mdc-snack-bar-container.snackbar-error {
+  --mdc-snackbar-container-color: #c62828;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-mdc-snack-bar-button-color: #ffffff;
+}
+
 html,
 body {
   height: 100%;
