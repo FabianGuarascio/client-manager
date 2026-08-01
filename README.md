@@ -7,7 +7,7 @@ de clientes. Desarrollada como parte de un challenge técnico.
 
 ## Stack
 
-- **Angular 15** (NgModules, Reactive Forms)
+- **Angular 15** (Standalone Components, Reactive Forms)
 - **Angular Material** para la UI
 - **Firebase Firestore** para persistencia de clientes
 - **Firebase Authentication** (Email/Password) para proteger rutas y acciones

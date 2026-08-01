@@ -7,6 +7,15 @@
 
   <span class="spacer"></span>
 
+  <button
+    mat-icon-button
+    (click)="themeService.toggle()"
+    [attr.aria-label]="themeService.isDarkMode ? 'Activar modo claro' : 'Activar modo oscuro'"
+    [matTooltip]="themeService.isDarkMode ? 'Modo claro' : 'Modo oscuro'"
+  >
+    <mat-icon>{{ themeService.isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+
   <ng-container *ngIf="user$ | async as user; else loggedOut">
     <span class="user-email">{{ user.email }}</span>
     <button mat-button (click)="logout()">

@@ -15,11 +15,34 @@
 
 .stat-label {
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.6);
+  color: inherit;
+  opacity: 0.6;
 }
 
 .stat-value {
   font-size: 28px;
   font-weight: 500;
   margin-top: 4px;
+}
+
+// `currentColor` hereda el color de texto del tema (claro/oscuro) sin
+// necesitar una regla por tema aparte.
+.skeleton {
+  display: inline-block;
+  width: 56px;
+  height: 28px;
+  border-radius: 4px;
+  background: currentColor;
+  opacity: 0.12;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.22;
+  }
 }

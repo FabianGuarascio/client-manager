@@ -30,7 +30,8 @@
 .no-data {
   text-align: center;
   padding: 24px;
-  color: rgba(0, 0, 0, 0.6);
+  color: inherit;
+  opacity: 0.6;
 }
 
 .loading {

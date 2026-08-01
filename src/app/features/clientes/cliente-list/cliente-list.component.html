@@ -1,11 +1,15 @@
 <div class="page">
-  <app-estadisticas [clientes]="clientes"></app-estadisticas>
+  <app-estadisticas [clientes]="clientes" [cargando]="cargando"></app-estadisticas>
 
   <mat-card class="list-card">
     <div class="list-header">
-      <mat-form-field appearance="outline" class="filter-field">
+      <mat-form-field appearance="outline" class="filter-field" subscriptSizing="dynamic">
         <mat-label>Buscar</mat-label>
-        <input matInput (keyup)="aplicarFiltro($any($event.target).value)" placeholder="Nombre, apellido..." />
+        <input
+          matInput
+          (keyup)="aplicarFiltro($any($event.target).value)"
+          placeholder="Nombre, apellido..."
+        />
       </mat-form-field>
 
       <a mat-raised-button color="primary" routerLink="/clientes/nuevo">Nuevo cliente</a>
@@ -49,7 +53,11 @@
         </table>
       </div>
 
-      <mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="10" showFirstLastButtons></mat-paginator>
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 25]"
+        [pageSize]="10"
+        showFirstLastButtons
+      ></mat-paginator>
     </ng-container>
   </mat-card>
 </div>

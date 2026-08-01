@@ -6,12 +6,22 @@
 
 .back-link {
   display: block;
+  margin-top: 8px;
   margin-bottom: 16px;
   font-size: 14px;
 }
 
 .full-width {
   width: 100%;
+  margin-bottom: 20px;
+}
+
+// Con subscriptSizing="dynamic" el hint queda pegado al borde inferior del
+// input; le damos el mismo respiro que tienen los mat-error de los otros
+// campos.
+.edad-hint {
+  display: block;
+  margin-top: 6px;
 }
 
 .cross-field-error {

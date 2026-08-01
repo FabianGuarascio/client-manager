@@ -1,6 +1,8 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { Cliente } from '../../../models/cliente.model';
 import { EstadisticasService } from '../estadisticas.service';
+import { DecimalPipe, NgIf } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
 
 /**
  * Muestra promedio y desvío estándar de las edades de la lista de clientes
@@ -9,10 +11,15 @@ import { EstadisticasService } from '../estadisticas.service';
 @Component({
   selector: 'app-estadisticas',
   templateUrl: './estadisticas.component.html',
-  styleUrls: ['./estadisticas.component.scss']
+  styleUrls: ['./estadisticas.component.scss'],
+  standalone: true,
+  imports: [MatCardModule, DecimalPipe, NgIf],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EstadisticasComponent implements OnChanges {
   @Input() clientes: Cliente[] = [];
+  /** Mientras es true, cada tarjeta muestra un skeleton en vez del valor. */
+  @Input() cargando = false;
 
   promedio = 0;
   desviacionEstandar = 0;

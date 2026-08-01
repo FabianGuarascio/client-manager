@@ -3,17 +3,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { AuthService } from './core/auth/auth.service';
-import { SharedMaterialModule } from './shared/material.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, SharedMaterialModule, NoopAnimationsModule],
-      declarations: [AppComponent],
-      providers: [
-        { provide: AuthService, useValue: { user$: of(null) } }
-      ]
+      imports: [RouterTestingModule, NoopAnimationsModule, AppComponent],
+      providers: [{ provide: AuthService, useValue: { user$: of(null) } }],
     }).compileComponents();
   });
 

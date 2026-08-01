@@ -1,16 +1,24 @@
 <div class="stats-row">
   <mat-card class="stat-card">
     <span class="stat-label">Promedio de edad</span>
-    <span class="stat-value">{{ promedio | number: '1.1-1' }}</span>
+    <span class="stat-value" *ngIf="!cargando; else skeleton">{{
+      promedio | number: '1.1-1'
+    }}</span>
   </mat-card>
 
   <mat-card class="stat-card">
     <span class="stat-label">Desvío estándar</span>
-    <span class="stat-value">{{ desviacionEstandar | number: '1.1-1' }}</span>
+    <span class="stat-value" *ngIf="!cargando; else skeleton">{{
+      desviacionEstandar | number: '1.1-1'
+    }}</span>
   </mat-card>
 
   <mat-card class="stat-card">
     <span class="stat-label">Clientes registrados</span>
-    <span class="stat-value">{{ clientes.length }}</span>
+    <span class="stat-value" *ngIf="!cargando; else skeleton">{{ clientes.length }}</span>
   </mat-card>
 </div>
+
+<ng-template #skeleton>
+  <span class="stat-value skeleton" aria-hidden="true"></span>
+</ng-template>

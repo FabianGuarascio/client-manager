@@ -7,7 +7,10 @@ import { Pipe, PipeTransform } from '@angular/core';
  *
  * @example {{ cliente.nombre | capitalizar }}
  */
-@Pipe({ name: 'capitalizar' })
+@Pipe({
+  name: 'capitalizar',
+  standalone: true,
+})
 export class CapitalizarPipe implements PipeTransform {
   transform(value: string | null | undefined): string {
     if (!value) {

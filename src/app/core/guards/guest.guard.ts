@@ -5,15 +5,16 @@ import { map, take } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 
 /**
- * Bloquea el acceso a rutas protegidas si no hay sesión activa,
- * redirigiendo a /login.
+ * Bloquea el acceso a rutas de invitado (login/registro) si ya hay sesión
+ * activa, redirigiendo a /clientes. Evita que un usuario logueado vea el
+ * formulario de login al navegar directamente a /login.
  */
-export const authGuard: CanActivateFn = (): Observable<boolean | UrlTree> => {
+export const guestGuard: CanActivateFn = (): Observable<boolean | UrlTree> => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
   return authService.isLoggedIn$.pipe(
     take(1),
-    map((isLoggedIn) => isLoggedIn || router.createUrlTree(['/login'])),
+    map((isLoggedIn) => !isLoggedIn || router.createUrlTree(['/clientes'])),
   );
 };
