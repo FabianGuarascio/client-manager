@@ -46,4 +46,31 @@ describe('ClienteListComponent', () => {
     component.aplicarFiltro('ana');
     expect(component.dataSource.filter).toBe('ana');
   });
+
+  it('should filter by nombre', () => {
+    component.aplicarFiltro('ana');
+    expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['1']);
+  });
+
+  it('should filter by apellido', () => {
+    component.aplicarFiltro('perez');
+    expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['2']);
+  });
+
+  it('should filter by edad', () => {
+    component.aplicarFiltro('40');
+    expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['2']);
+  });
+
+  it('should filter by fecha de nacimiento using the same formatting shown in the table', () => {
+    // '1999-05-01' se muestra como "1 de mayo de 1999" — el filtro debe
+    // matchear contra ese texto formateado, no contra el ISO string crudo.
+    component.aplicarFiltro('mayo');
+    expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['1']);
+  });
+
+  it('should return no rows when nothing matches', () => {
+    component.aplicarFiltro('inexistente');
+    expect(component.dataSource.filteredData.length).toBe(0);
+  });
 });
