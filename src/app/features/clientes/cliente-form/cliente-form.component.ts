@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,6 +7,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { BehaviorSubject } from 'rxjs';
 import { ClienteService } from '../cliente.service';
 import {
   fechaNoFuturaValidator,
@@ -15,7 +16,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { NgIf } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { RouterLink } from '@angular/router';
@@ -33,11 +34,13 @@ import { MatCardModule } from '@angular/material/card';
     MatFormFieldModule,
     MatInputModule,
     NgIf,
+    AsyncPipe,
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
     MatSnackBarModule,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClienteFormComponent {
   // El ErrorStateMatcher default de Material marca un control en error si
@@ -59,16 +62,21 @@ export class ClienteFormComponent {
     fechaNacimiento: ['', [Validators.required, fechaNoFuturaValidator]],
   });
 
-  saving = false;
+  private readonly savingSubject = new BehaviorSubject<boolean>(false);
+  readonly saving$ = this.savingSubject.asObservable();
 
   constructor(
     private fb: FormBuilder,
     private clienteService: ClienteService,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {
+    // Suscripción propia, no un binding de template: con OnPush hay que
+    // pedir explícitamente el re-chequeo para que el campo Edad se refleje.
     this.form.get('fechaNacimiento')!.valueChanges.subscribe((value) => {
       const edad = this.calcularEdad(value);
       this.form.get('edad')!.setValue(edad ?? '', { emitEvent: false });
+      this.cdr.markForCheck();
     });
   }
 
@@ -101,7 +109,7 @@ export class ClienteFormComponent {
       return;
     }
 
-    this.saving = true;
+    this.savingSubject.next(true);
     const { nombre, apellido, fechaNacimiento } = this.form.value;
     const { edad } = this.form.getRawValue();
     const fecha: Date =
@@ -125,7 +133,7 @@ export class ClienteFormComponent {
         panelClass: 'snackbar-error',
       });
     } finally {
-      this.saving = false;
+      this.savingSubject.next(false);
     }
   }
 }

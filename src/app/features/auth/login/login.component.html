@@ -33,7 +33,7 @@
         color="primary"
         type="submit"
         class="full-width"
-        [disabled]="loading"
+        [disabled]="loading$ | async"
       >
         Ingresar
       </button>

@@ -1,4 +1,10 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -42,6 +48,7 @@ import { EstadisticasComponent } from '../../estadisticas/estadisticas/estadisti
     FechaFormatoPipe,
     CapitalizarPipe,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClienteListComponent implements OnDestroy {
   readonly columnas = ['nombre', 'apellido', 'edad', 'fechaNacimiento'];
@@ -67,11 +74,18 @@ export class ClienteListComponent implements OnDestroy {
 
   private readonly subscription: Subscription;
 
-  constructor(private clienteService: ClienteService) {
+  constructor(
+    private clienteService: ClienteService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    // El listener de Firestore no dispara dentro de ningún evento de esta
+    // vista, así que con OnPush hace falta marcar la vista para que se
+    // refleje (spinner -> tabla, filas nuevas).
     this.subscription = this.clienteService.getAll().subscribe((clientes) => {
       this.clientes = clientes;
       this.dataSource.data = clientes;
       this.cargando = false;
+      this.cdr.markForCheck();
     });
   }
 

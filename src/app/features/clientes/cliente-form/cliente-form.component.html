@@ -53,7 +53,13 @@
         La edad calculada debe estar entre 0 y 120.
       </mat-error>
     </mat-form-field>
-    <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="saving">
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      class="full-width"
+      [disabled]="saving$ | async"
+    >
       Guardar cliente
     </button>
   </form>

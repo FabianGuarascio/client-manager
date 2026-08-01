@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { Cliente } from '../../../models/cliente.model';
 import { EstadisticasService } from '../estadisticas.service';
 import { DecimalPipe } from '@angular/common';
@@ -14,6 +14,7 @@ import { MatCardModule } from '@angular/material/card';
   styleUrls: ['./estadisticas.component.scss'],
   standalone: true,
   imports: [MatCardModule, DecimalPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EstadisticasComponent implements OnChanges {
   @Input() clientes: Cliente[] = [];

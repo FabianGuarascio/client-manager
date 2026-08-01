@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -9,9 +9,10 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { BehaviorSubject } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 import { MatButtonModule } from '@angular/material/button';
-import { NgIf } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
@@ -34,10 +35,12 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
     MatFormFieldModule,
     MatInputModule,
     NgIf,
+    AsyncPipe,
     MatButtonModule,
     RouterLink,
     MatSnackBarModule,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterComponent {
   readonly form: FormGroup = this.fb.group(
@@ -49,7 +52,8 @@ export class RegisterComponent {
     { validators: passwordsMatchValidator },
   );
 
-  loading = false;
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
+  readonly loading$ = this.loadingSubject.asObservable();
 
   constructor(
     private fb: FormBuilder,
@@ -64,7 +68,7 @@ export class RegisterComponent {
       return;
     }
 
-    this.loading = true;
+    this.loadingSubject.next(true);
     const { email, password } = this.form.value;
 
     try {
@@ -75,7 +79,7 @@ export class RegisterComponent {
         duration: 4000,
       });
     } finally {
-      this.loading = false;
+      this.loadingSubject.next(false);
     }
   }
 }
