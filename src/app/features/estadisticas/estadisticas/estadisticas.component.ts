@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { Cliente } from '../../../models/cliente.model';
 import { EstadisticasService } from '../estadisticas.service';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgIf } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 
 /**
@@ -13,11 +13,13 @@ import { MatCardModule } from '@angular/material/card';
   templateUrl: './estadisticas.component.html',
   styleUrls: ['./estadisticas.component.scss'],
   standalone: true,
-  imports: [MatCardModule, DecimalPipe],
+  imports: [MatCardModule, DecimalPipe, NgIf],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EstadisticasComponent implements OnChanges {
   @Input() clientes: Cliente[] = [];
+  /** Mientras es true, cada tarjeta muestra un skeleton en vez del valor. */
+  @Input() cargando = false;
 
   promedio = 0;
   desviacionEstandar = 0;

@@ -87,6 +87,15 @@ a {
   --mat-mdc-snack-bar-button-color: #ffffff;
 }
 
+// En pantallas muy angostas el label de rango del paginador ("1 – 6 of 6")
+// no tiene ancho suficiente y, al no tener `white-space` explícito, wrapea
+// palabra por palabra en vez de quedarse en una sola línea. El resto del
+// paginador (selector de tamaño de página, flechas) ya wrapea en su propia
+// fila por CSS default de Material, esto solo evita el wrap feo del label.
+.mat-mdc-paginator-range-label {
+  white-space: nowrap;
+}
+
 html,
 body {
   height: 100%;
