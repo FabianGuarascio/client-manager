@@ -1,0 +1,13 @@
+@use '@angular/material' as mat;
+@use 'theme';
+
+// Los <a> no forman parte de los componentes de Material, así que su color
+// no cambia solo con all-component-colors: hay que fijarlo a mano por tema
+// para que sean legibles contra el fondo claro/oscuro.
+a {
+  color: mat.get-color-from-palette(theme.$client-manager-primary, 700);
+}
+
+.dark-theme a {
+  color: mat.get-color-from-palette(theme.$client-manager-primary, 100);
+}

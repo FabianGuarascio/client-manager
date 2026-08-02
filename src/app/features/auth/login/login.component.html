@@ -39,6 +39,13 @@
       </button>
     </form>
 
+    <div class="divider"><span>o</span></div>
+
+    <app-google-sign-in-button
+      [disabled]="!!(loading$ | async)"
+      (signIn)="continueWithGoogle()"
+    ></app-google-sign-in-button>
+
     <p class="switch-link">¿No tenés cuenta? <a routerLink="/register">Registrate</a></p>
   </mat-card>
 </div>

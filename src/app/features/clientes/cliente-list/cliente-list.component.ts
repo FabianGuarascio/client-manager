@@ -73,11 +73,27 @@ export class ClienteListComponent implements OnDestroy {
   }
 
   private readonly subscription: Subscription;
+  private readonly fechaFormatoPipe = new FechaFormatoPipe();
 
   constructor(
     private clienteService: ClienteService,
     private cdr: ChangeDetectorRef,
   ) {
+    // Filtro explícito por nombre/apellido/edad/fecha en vez del default de
+    // MatTableDataSource (que concatena TODOS los campos del objeto,
+    // incluido el id). La fecha se compara ya formateada ("15 de marzo de
+    // 1990"), igual que se ve en la tabla — si no, buscar por el mes en
+    // texto no encontraba nada porque el dato crudo es un ISO string.
+    this.dataSource.filterPredicate = (cliente, filtro) => {
+      const campos = [
+        cliente.nombre,
+        cliente.apellido,
+        String(cliente.edad),
+        this.fechaFormatoPipe.transform(cliente.fechaNacimiento),
+      ];
+      return campos.some((campo) => campo.toLowerCase().includes(filtro));
+    };
+
     // El listener de Firestore no dispara dentro de ningún evento de esta
     // vista, así que con OnPush hace falta marcar la vista para que se
     // refleje (spinner -> tabla, filas nuevas).
