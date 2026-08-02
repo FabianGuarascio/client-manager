@@ -9,10 +9,10 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Subscription } from 'rxjs';
-import { Cliente } from '../../../models/cliente.model';
-import { ClienteService } from '../cliente.service';
-import { CapitalizarPipe } from '../../../pipes/capitalizar.pipe';
-import { FechaFormatoPipe } from '../../../pipes/fecha-formato.pipe';
+import { Cliente } from '../../../../models/cliente.model';
+import { ClienteService } from '../../services/cliente.service';
+import { CapitalizarPipe } from '../../../../pipes/capitalizar.pipe';
+import { FechaFormatoPipe } from '../../../../pipes/fecha-formato.pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -20,7 +20,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
-import { EstadisticasComponent } from '../../estadisticas/estadisticas/estadisticas.component';
+import { EstadisticasComponent } from '../../../estadisticas/components/estadisticas/estadisticas.component';
 
 /**
  * Listado de clientes con filtro por texto, orden por columna y paginación.

@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './features/auth/login/login.component';
-import { RegisterComponent } from './features/auth/register/register.component';
-import { ClienteFormComponent } from './features/clientes/cliente-form/cliente-form.component';
-import { ClienteListComponent } from './features/clientes/cliente-list/cliente-list.component';
+import { LoginComponent } from './features/auth/components/login/login.component';
+import { RegisterComponent } from './features/auth/components/register/register.component';
+import { ClienteFormComponent } from './features/clientes/components/cliente-form/cliente-form.component';
+import { ClienteListComponent } from './features/clientes/components/cliente-list/cliente-list.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 

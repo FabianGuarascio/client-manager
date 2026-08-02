@@ -4,26 +4,26 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { Router } from '@angular/router';
-import { LoginComponent } from './login.component';
-import { AuthService } from '../../../core/auth/auth.service';
+import { RegisterComponent } from './register.component';
+import { AuthService } from '../../../../core/auth/auth.service';
 
-describe('LoginComponent', () => {
-  let component: LoginComponent;
-  let fixture: ComponentFixture<LoginComponent>;
-  let authService: { login: jasmine.Spy; loginWithGoogle: jasmine.Spy };
+describe('RegisterComponent', () => {
+  let component: RegisterComponent;
+  let fixture: ComponentFixture<RegisterComponent>;
+  let authService: { register: jasmine.Spy; loginWithGoogle: jasmine.Spy };
 
   beforeEach(async () => {
     authService = {
-      login: jasmine.createSpy('login').and.resolveTo(),
+      register: jasmine.createSpy('register').and.resolveTo(),
       loginWithGoogle: jasmine.createSpy('loginWithGoogle').and.resolveTo(),
     };
 
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, RouterTestingModule, NoopAnimationsModule, LoginComponent],
+      imports: [ReactiveFormsModule, RouterTestingModule, NoopAnimationsModule, RegisterComponent],
       providers: [{ provide: AuthService, useValue: authService }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(LoginComponent);
+    fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -32,13 +32,16 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should be invalid when empty', () => {
-    expect(component.form.valid).toBeFalse();
+  it('should flag mismatched passwords', () => {
+    component.form.controls['password'].setValue('password123');
+    component.form.controls['confirmPassword'].setValue('different');
+    expect(component.form.hasError('passwordsMismatch')).toBeTrue();
   });
 
-  it('should require a valid email format', () => {
-    component.form.controls['email'].setValue('not-an-email');
-    expect(component.form.controls['email'].hasError('email')).toBeTrue();
+  it('should accept matching passwords', () => {
+    component.form.controls['password'].setValue('password123');
+    component.form.controls['confirmPassword'].setValue('password123');
+    expect(component.form.hasError('passwordsMismatch')).toBeFalse();
   });
 
   it('should sign in with Google and navigate to /clientes', async () => {

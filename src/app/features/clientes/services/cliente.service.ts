@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
-import { Cliente } from '../../models/cliente.model';
+import { Cliente } from '../../../models/cliente.model';
 
 /**
  * CRUD de clientes contra la colección `clientes` de Firestore.

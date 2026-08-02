@@ -4,9 +4,9 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 
 import { ClienteListComponent } from './cliente-list.component';
-import { EstadisticasComponent } from '../../estadisticas/estadisticas/estadisticas.component';
-import { ClienteService } from '../cliente.service';
-import { Cliente } from '../../../models/cliente.model';
+import { EstadisticasComponent } from '../../../estadisticas/components/estadisticas/estadisticas.component';
+import { ClienteService } from '../../services/cliente.service';
+import { Cliente } from '../../../../models/cliente.model';
 
 describe('ClienteListComponent', () => {
   let component: ClienteListComponent;

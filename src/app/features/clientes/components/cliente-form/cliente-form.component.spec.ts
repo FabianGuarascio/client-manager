@@ -6,8 +6,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ClienteFormComponent } from './cliente-form.component';
-import { ClienteService } from '../cliente.service';
-import { calcularEdad } from '../../../shared/validators/cliente.validators';
+import { ClienteService } from '../../services/cliente.service';
+import { calcularEdad } from '../../validators/cliente.validators';
 
 function completarFormularioValido(component: ClienteFormComponent): void {
   component.form.controls['nombre'].setValue('Juan');
