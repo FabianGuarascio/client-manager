@@ -1,0 +1,6 @@
+// Reglas que pisan clases generadas por Angular Material/MDC (frágiles ante
+// updates de la librería, a diferencia del resto de src/styles/ que es CSS
+// propio). Un archivo por componente de Material tocado.
+@use 'form-fields';
+@use 'snackbar';
+@use 'paginator';
