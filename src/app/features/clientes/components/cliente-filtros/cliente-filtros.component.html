@@ -1,0 +1,20 @@
+<div class="filtros">
+  <mat-form-field appearance="outline" class="filter-field" subscriptSizing="dynamic">
+    <mat-label>Buscar</mat-label>
+    <input
+      matInput
+      (keyup)="aplicarTexto($any($event.target).value)"
+      placeholder="Nombre, apellido, edad, fecha de nacimiento..."
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="edad-field" subscriptSizing="dynamic">
+    <mat-label>Edad desde</mat-label>
+    <input matInput type="number" min="0" (input)="aplicarEdadDesde($any($event.target).value)" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="edad-field" subscriptSizing="dynamic">
+    <mat-label>Edad hasta</mat-label>
+    <input matInput type="number" min="0" (input)="aplicarEdadHasta($any($event.target).value)" />
+  </mat-form-field>
+</div>

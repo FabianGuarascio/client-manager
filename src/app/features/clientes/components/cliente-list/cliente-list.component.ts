@@ -10,6 +10,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { Cliente } from '../../../../models/cliente.model';
+import { FiltroClientes } from '../../../../models/filtro-clientes.model';
 import { ClienteService } from '../../services/cliente.service';
 import { CapitalizarPipe } from '../../../../pipes/capitalizar.pipe';
 import { FechaFormatoPipe } from '../../../../pipes/fecha-formato.pipe';
@@ -18,19 +19,18 @@ import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { EstadisticasComponent } from '../../../estadisticas/components/estadisticas/estadisticas.component';
 import { ConfirmarEliminarDialogComponent } from '../confirmar-eliminar-dialog/confirmar-eliminar-dialog.component';
+import { ClienteFiltrosComponent } from '../cliente-filtros/cliente-filtros.component';
 
 /**
- * Listado de clientes con filtro por texto, orden por columna y paginación.
- * También muestra las estadísticas (promedio/desvío) de la lista completa
- * (sin aplicar el filtro de texto, para que reflejen a todos los
- * registrados y no solo la vista filtrada).
+ * Listado de clientes con filtro por texto, por rango de edad, orden por
+ * columna y paginación. También muestra las estadísticas (promedio/desvío)
+ * de la lista completa (sin aplicar los filtros, para que reflejen a todos
+ * los registrados y no solo la vista filtrada).
  */
 @Component({
   selector: 'app-cliente-list',
@@ -39,9 +39,8 @@ import { ConfirmarEliminarDialogComponent } from '../confirmar-eliminar-dialog/c
   standalone: true,
   imports: [
     EstadisticasComponent,
+    ClienteFiltrosComponent,
     MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
     MatButtonModule,
     MatIconModule,
     RouterLink,
@@ -101,19 +100,29 @@ export class ClienteListComponent implements OnDestroy {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
   ) {
-    // Filtro explícito por nombre/apellido/edad/fecha en vez del default de
-    // MatTableDataSource (que concatena TODOS los campos del objeto,
-    // incluido el id). La fecha se compara ya formateada ("15 de marzo de
-    // 1990"), igual que se ve en la tabla — si no, buscar por el mes en
-    // texto no encontraba nada porque el dato crudo es un ISO string.
-    this.dataSource.filterPredicate = (cliente, filtro) => {
-      const campos = [
-        cliente.nombre,
-        cliente.apellido,
-        String(cliente.edad),
-        this.fechaFormatoPipe.transform(cliente.fechaNacimiento),
-      ];
-      return campos.some((campo) => campo.toLowerCase().includes(filtro));
+    // Filtro explícito por nombre/apellido/edad/fecha (en vez del default
+    // de MatTableDataSource, que concatena TODOS los campos del objeto,
+    // incluido el id) combinado con el rango de edad. La fecha se compara
+    // ya formateada ("15 de marzo de 1990"), igual que se ve en la tabla —
+    // si no, buscar por el mes en texto no encontraba nada porque el dato
+    // crudo es un ISO string.
+    this.dataSource.filterPredicate = (cliente, filtroJson) => {
+      const { texto, edadDesde, edadHasta } = JSON.parse(filtroJson) as FiltroClientes;
+
+      const coincideTexto =
+        !texto ||
+        [
+          cliente.nombre,
+          cliente.apellido,
+          String(cliente.edad),
+          this.fechaFormatoPipe.transform(cliente.fechaNacimiento),
+        ].some((campo) => campo.toLowerCase().includes(texto));
+
+      const coincideEdad =
+        (edadDesde == null || cliente.edad >= edadDesde) &&
+        (edadHasta == null || cliente.edad <= edadHasta);
+
+      return coincideTexto && coincideEdad;
     };
 
     // El listener de Firestore no dispara dentro de ningún evento de esta
@@ -131,8 +140,8 @@ export class ClienteListComponent implements OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  aplicarFiltro(texto: string): void {
-    this.dataSource.filter = texto.trim().toLowerCase();
+  aplicarFiltro(filtro: FiltroClientes): void {
+    this.dataSource.filter = JSON.stringify(filtro);
   }
 
   /** Combina la lista real de Firestore con las filas congeladas en medio de un borrado. */

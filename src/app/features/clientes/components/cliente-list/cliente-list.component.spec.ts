@@ -7,8 +7,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ClienteListComponent } from './cliente-list.component';
 import { EstadisticasComponent } from '../../../estadisticas/components/estadisticas/estadisticas.component';
+import { ClienteFiltrosComponent } from '../cliente-filtros/cliente-filtros.component';
 import { ClienteService } from '../../services/cliente.service';
 import { Cliente } from '../../../../models/cliente.model';
+import { FiltroClientes } from '../../../../models/filtro-clientes.model';
+
+/** Completa los campos no indicados de FiltroClientes con "sin filtro". */
+function filtro(parcial: Partial<FiltroClientes>): FiltroClientes {
+  return { texto: '', edadDesde: null, edadHasta: null, ...parcial };
+}
 
 describe('ClienteListComponent', () => {
   let component: ClienteListComponent;
@@ -18,6 +25,7 @@ describe('ClienteListComponent', () => {
   const clientesDeEjemplo: Cliente[] = [
     { id: '1', nombre: 'ana', apellido: 'gomez', edad: 25, fechaNacimiento: '1999-05-01' },
     { id: '2', nombre: 'juan', apellido: 'perez', edad: 40, fechaNacimiento: '1985-02-10' },
+    { id: '3', nombre: 'luis', apellido: 'diaz', edad: 10, fechaNacimiento: '2014-03-20' },
   ];
 
   beforeEach(async () => {
@@ -32,6 +40,7 @@ describe('ClienteListComponent', () => {
         NoopAnimationsModule,
         ClienteListComponent,
         EstadisticasComponent,
+        ClienteFiltrosComponent,
       ],
       providers: [{ provide: ClienteService, useValue: clienteServiceMock }],
     }).compileComponents();
@@ -46,40 +55,61 @@ describe('ClienteListComponent', () => {
   });
 
   it('should load clients from the service into the table', () => {
-    expect(component.clientes.length).toBe(2);
-    expect(component.dataSource.data.length).toBe(2);
-  });
-
-  it('should filter the data source by text', () => {
-    component.aplicarFiltro('ana');
-    expect(component.dataSource.filter).toBe('ana');
+    expect(component.clientes.length).toBe(3);
+    expect(component.dataSource.data.length).toBe(3);
   });
 
   it('should filter by nombre', () => {
-    component.aplicarFiltro('ana');
+    component.aplicarFiltro(filtro({ texto: 'ana' }));
     expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['1']);
   });
 
   it('should filter by apellido', () => {
-    component.aplicarFiltro('perez');
+    component.aplicarFiltro(filtro({ texto: 'perez' }));
     expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['2']);
   });
 
   it('should filter by edad', () => {
-    component.aplicarFiltro('40');
+    component.aplicarFiltro(filtro({ texto: '40' }));
     expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['2']);
   });
 
   it('should filter by fecha de nacimiento using the same formatting shown in the table', () => {
     // '1999-05-01' se muestra como "1 de mayo de 1999" — el filtro debe
     // matchear contra ese texto formateado, no contra el ISO string crudo.
-    component.aplicarFiltro('mayo');
+    component.aplicarFiltro(filtro({ texto: 'mayo' }));
     expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['1']);
   });
 
   it('should return no rows when nothing matches', () => {
-    component.aplicarFiltro('inexistente');
+    component.aplicarFiltro(filtro({ texto: 'inexistente' }));
     expect(component.dataSource.filteredData.length).toBe(0);
+  });
+
+  it('should filter by an age range (desde y hasta)', () => {
+    component.aplicarFiltro(filtro({ edadDesde: 20, edadHasta: 30 }));
+    expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['1']);
+  });
+
+  it('should filter by an open-ended age range (solo desde)', () => {
+    component.aplicarFiltro(filtro({ edadDesde: 30 }));
+    expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['2']);
+  });
+
+  it('should filter by an open-ended age range (solo hasta)', () => {
+    component.aplicarFiltro(filtro({ edadHasta: 20 }));
+    expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['3']);
+  });
+
+  it('should combine the text filter with the age range', () => {
+    component.aplicarFiltro(filtro({ texto: 'a', edadDesde: 20, edadHasta: 30 }));
+    expect(component.dataSource.filteredData.map((c) => c.id)).toEqual(['1']);
+  });
+
+  it('should clear the age filter when edadDesde is null', () => {
+    component.aplicarFiltro(filtro({ edadDesde: 20 }));
+    component.aplicarFiltro(filtro({}));
+    expect(component.dataSource.filteredData.length).toBe(3);
   });
 
   describe('eliminar', () => {

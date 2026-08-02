@@ -3,14 +3,7 @@
 
   <mat-card class="list-card">
     <div class="list-header">
-      <mat-form-field appearance="outline" class="filter-field" subscriptSizing="dynamic">
-        <mat-label>Buscar</mat-label>
-        <input
-          matInput
-          (keyup)="aplicarFiltro($any($event.target).value)"
-          placeholder="Nombre, apellido, edad, fecha de nacimiento..."
-        />
-      </mat-form-field>
+      <app-cliente-filtros (filtroCambio)="aplicarFiltro($event)"></app-cliente-filtros>
 
       <a mat-raised-button color="primary" routerLink="/clientes/nuevo">Nuevo cliente</a>
     </div>
