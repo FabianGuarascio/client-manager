@@ -17,10 +17,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { EstadisticasComponent } from '../../../estadisticas/components/estadisticas/estadisticas.component';
+import { ConfirmarEliminarDialogComponent } from '../confirmar-eliminar-dialog/confirmar-eliminar-dialog.component';
 
 /**
  * Listado de clientes con filtro por texto, orden por columna y paginación.
@@ -39,19 +43,22 @@ import { EstadisticasComponent } from '../../../estadisticas/components/estadist
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
     RouterLink,
     NgIf,
     MatProgressSpinnerModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
+    MatDialogModule,
+    MatSnackBarModule,
     FechaFormatoPipe,
     CapitalizarPipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClienteListComponent implements OnDestroy {
-  readonly columnas = ['nombre', 'apellido', 'edad', 'fechaNacimiento'];
+  readonly columnas = ['nombre', 'apellido', 'edad', 'fechaNacimiento', 'acciones'];
   readonly dataSource = new MatTableDataSource<Cliente>([]);
 
   clientes: Cliente[] = [];
@@ -72,12 +79,27 @@ export class ClienteListComponent implements OnDestroy {
     }
   }
 
+  // Ids en proceso de borrado: mientras esperan la confirmación del backend,
+  // se les muestra un spinner en la fila en vez del ícono de basura.
+  readonly eliminandoIds = new Set<string>();
+
+  // Firestore aplica los writes de forma optimista: el listener de getAll()
+  // ya refleja el borrado (la fila desaparece de `clientes`) antes de que
+  // se resuelva la promesa de `delete()`. Para que la fila solo desaparezca
+  // de la tabla cuando el backend confirmó el borrado (no antes), se
+  // "congela" acá mientras está en `eliminandoIds`, aunque el listener ya
+  // haya dejado de emitirla — si el borrado termina fallando, Firestore
+  // revierte el cambio local y la fila vuelve a `clientes` sola.
+  private readonly clientesCongelados = new Map<string, Cliente>();
+
   private readonly subscription: Subscription;
   private readonly fechaFormatoPipe = new FechaFormatoPipe();
 
   constructor(
     private clienteService: ClienteService,
     private cdr: ChangeDetectorRef,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
   ) {
     // Filtro explícito por nombre/apellido/edad/fecha en vez del default de
     // MatTableDataSource (que concatena TODOS los campos del objeto,
@@ -99,7 +121,7 @@ export class ClienteListComponent implements OnDestroy {
     // refleje (spinner -> tabla, filas nuevas).
     this.subscription = this.clienteService.getAll().subscribe((clientes) => {
       this.clientes = clientes;
-      this.dataSource.data = clientes;
+      this.actualizarVista();
       this.cargando = false;
       this.cdr.markForCheck();
     });
@@ -111,5 +133,53 @@ export class ClienteListComponent implements OnDestroy {
 
   aplicarFiltro(texto: string): void {
     this.dataSource.filter = texto.trim().toLowerCase();
+  }
+
+  /** Combina la lista real de Firestore con las filas congeladas en medio de un borrado. */
+  private actualizarVista(): void {
+    const idsPresentes = new Set(this.clientes.map((cliente) => cliente.id));
+    const filasCongeladas = [...this.clientesCongelados.values()].filter(
+      (cliente) => !idsPresentes.has(cliente.id),
+    );
+    this.dataSource.data = [...this.clientes, ...filasCongeladas];
+  }
+
+  eliminar(cliente: Cliente): void {
+    const dialogRef = this.dialog.open(ConfirmarEliminarDialogComponent, {
+      data: { nombre: cliente.nombre, apellido: cliente.apellido },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmado) => {
+      if (!confirmado) {
+        return;
+      }
+
+      const id = cliente.id!;
+      this.eliminandoIds.add(id);
+      this.clientesCongelados.set(id, cliente);
+      this.actualizarVista();
+      this.cdr.markForCheck();
+
+      this.clienteService
+        .delete(id)
+        .then(() => {
+          this.snackBar.open('Cliente eliminado.', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snackbar-success',
+          });
+        })
+        .catch(() => {
+          this.snackBar.open('No se pudo eliminar el cliente. Intentá de nuevo.', 'Cerrar', {
+            duration: 4000,
+            panelClass: 'snackbar-error',
+          });
+        })
+        .finally(() => {
+          this.eliminandoIds.delete(id);
+          this.clientesCongelados.delete(id);
+          this.actualizarVista();
+          this.cdr.markForCheck();
+        });
+    });
   }
 }
