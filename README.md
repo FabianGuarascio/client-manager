@@ -28,14 +28,22 @@ de clientes. Desarrollada como parte de un challenge técnico.
   - Fecha de nacimiento: no puede ser futura.
   - Validador cruzado: la edad ingresada debe coincidir con los años
     cumplidos según la fecha de nacimiento.
-- Listado de clientes con filtro por texto, orden por columna
-  (`mat-sort`) y paginación.
+- Listado de clientes con filtro por texto sobre nombre, apellido, edad y
+  fecha de nacimiento (comparada ya formateada, "15 de marzo de 1990", igual
+  a como se ve en la tabla), orden por columna (`mat-sort`) y paginación.
 - Pipes personalizados: `fechaFormato` (fecha en español, ej. "15 de marzo
   de 1990") y `capitalizar` (normaliza nombre/apellido al mostrarlos).
 - Estadísticas de edad (promedio y desvío estándar **muestral**, es decir
   dividiendo por `n-1`: se trata a los clientes registrados como una
   muestra, no como la población completa) — se recalculan en tiempo real
-  con la lista de clientes y se muestran arriba del listado.
+  con la lista de clientes y se muestran arriba del listado, con un
+  skeleton mientras cargan.
+- Validación de esquema **server-side** en Firestore Security Rules
+  (`clienteValido()` en `firestore.rules`), no solo en el formulario: un
+  usuario autenticado no puede escribir un documento sin los campos
+  requeridos, con letras inválidas en nombre/apellido, edad fuera de 0-120,
+  ni con propiedades extra — la validación de Angular es UX, la de las
+  rules es la que realmente protege el dato.
 
 ## Desarrollo local
 
@@ -66,7 +74,14 @@ firebase deploy --only hosting,firestore:rules
 
 El deploy también corre automáticamente vía GitHub Actions
 (`.github/workflows/firebase-hosting-merge.yml`) en cada push a `main`, y
-genera un preview channel en cada Pull Request.
+genera un preview channel en cada Pull Request. Las Firestore Security
+Rules **no** se despliegan solas por CI — hay que correr
+`firebase deploy --only firestore:rules` a mano cuando cambian.
+
+Versionado: [SemVer](https://semver.org/) en `package.json`. Cada push a
+`main` dispara `.github/workflows/tag-release.yml`, que crea el tag
+`vX.Y.Z` y un GitHub Release automáticamente si esa versión todavía no
+tiene tag (si el push no bumpeó la versión, no hace nada).
 
 ## Decisiones de diseño
 
@@ -86,3 +101,8 @@ genera un preview channel en cada Pull Request.
 - **`skipLibCheck: true`** en `tsconfig.json`: workaround necesario para un
   bug de tipos conocido en los `.d.ts` de `@angular/fire@7.6.1/compat/firestore`
   contra TypeScript 4.9 (no es un problema del código de este proyecto).
+- **`ChangeDetectionStrategy.OnPush`** en todos los componentes: donde el
+  estado cambia fuera de un evento de template (suscripciones a Firestore,
+  al `valueChanges` de un control) se llama `ChangeDetectorRef.markForCheck()`
+  a mano, o se expone como observable y se consume con `| async` en el
+  template (que ya dispara su propio `markForCheck`).
