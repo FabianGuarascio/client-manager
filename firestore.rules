@@ -2,12 +2,38 @@ rules_version='2'
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Solo usuarios autenticados (Firebase Authentication) pueden leer y
-    // escribir clientes. El challenge pide proteger acciones sensibles con
-    // Firebase Auth; no hay noción de "dueño" del registro, así que
-    // cualquier usuario logueado puede operar sobre cualquier cliente.
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    // Espejo server-side de los validators de ClienteFormComponent
+    // (Validators.required/minLength, soloLetrasValidator, min/max de
+    // edad). Sin esto, cualquier usuario autenticado podía escribir
+    // cualquier cosa en /clientes llamando directo a la API de Firestore
+    // (o desde la consola del navegador) sin pasar por el formulario — la
+    // validación de Angular es solo UX, no protege el dato.
+    // No valida que fechaNacimiento no sea futura (fechaNoFuturaValidator):
+    // Firestore Rules no tiene forma simple de parsear un ISO string
+    // arbitrario a Timestamp para compararlo con request.time.
+    function clienteValido(datos) {
+      return datos.keys().hasOnly(['nombre', 'apellido', 'edad', 'fechaNacimiento'])
+        && datos.nombre is string
+        && datos.nombre.size() >= 2
+        && datos.nombre.matches('^[a-zA-ZÀ-ÿñÑ\\s]+$')
+        && datos.apellido is string
+        && datos.apellido.size() >= 2
+        && datos.apellido.matches('^[a-zA-ZÀ-ÿñÑ\\s]+$')
+        && datos.edad is number
+        && datos.edad >= 0
+        && datos.edad <= 120
+        && datos.fechaNacimiento is string
+        && datos.fechaNacimiento.size() > 0;
+    }
+
     match /clientes/{clienteId} {
-      allow read, write: if request.auth != null;
+      allow read: if estaAutenticado();
+      allow create, update: if estaAutenticado() && clienteValido(request.resource.data);
+      allow delete: if estaAutenticado();
     }
   }
 }
