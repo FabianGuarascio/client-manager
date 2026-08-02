@@ -12,11 +12,17 @@ service cloud.firestore {
     // cualquier cosa en /clientes llamando directo a la API de Firestore
     // (o desde la consola del navegador) sin pasar por el formulario — la
     // validación de Angular es solo UX, no protege el dato.
+    // Incluye 'id' en los campos permitidos porque ClienteService.create()
+    // también lo guarda como campo del documento (además de ser el id del
+    // doc en sí) — y se exige que coincida con clienteId, para que no se
+    // pueda guardar un id distinto al del path.
     // No valida que fechaNacimiento no sea futura (fechaNoFuturaValidator):
     // Firestore Rules no tiene forma simple de parsear un ISO string
     // arbitrario a Timestamp para compararlo con request.time.
-    function clienteValido(datos) {
-      return datos.keys().hasOnly(['nombre', 'apellido', 'edad', 'fechaNacimiento'])
+    function clienteValido(datos, clienteId) {
+      return datos.keys().hasOnly(['id', 'nombre', 'apellido', 'edad', 'fechaNacimiento'])
+        && datos.id is string
+        && datos.id == clienteId
         && datos.nombre is string
         && datos.nombre.size() >= 2
         && datos.nombre.matches('^[a-zA-ZÀ-ÿñÑ\\s]+$')
@@ -32,7 +38,7 @@ service cloud.firestore {
 
     match /clientes/{clienteId} {
       allow read: if estaAutenticado();
-      allow create, update: if estaAutenticado() && clienteValido(request.resource.data);
+      allow create, update: if estaAutenticado() && clienteValido(request.resource.data, clienteId);
       allow delete: if estaAutenticado();
     }
   }
