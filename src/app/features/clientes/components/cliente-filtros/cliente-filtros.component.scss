@@ -1,0 +1,25 @@
+// El host (<app-cliente-filtros>) es `display: inline` por default, así
+// que sin esto no participa del flex de `.list-header` en cliente-list:
+// el ancho se lo daba antes el <div> con los inputs, que ahora vive
+// adentro de este componente en vez de directo en ese contenedor.
+:host {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.filtros {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.filter-field {
+  flex: 1 1 280px;
+}
+
+.edad-field {
+  flex: 0 1 120px;
+}

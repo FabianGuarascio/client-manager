@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
-import { Cliente } from '../../../models/cliente.model';
-import { EstadisticasService } from '../estadisticas.service';
+import { Cliente } from '../../../../models/cliente.model';
+import { EstadisticasService } from '../../services/estadisticas.service';
 import { DecimalPipe, NgIf } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 

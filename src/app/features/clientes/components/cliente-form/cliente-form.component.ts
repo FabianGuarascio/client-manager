@@ -8,11 +8,11 @@ import {
 } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BehaviorSubject } from 'rxjs';
-import { ClienteService } from '../cliente.service';
+import { ClienteService } from '../../services/cliente.service';
 import {
   fechaNoFuturaValidator,
   soloLetrasValidator,
-} from '../../../shared/validators/cliente.validators';
+} from '../../validators/cliente.validators';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
