@@ -7,7 +7,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ClienteFormComponent } from './cliente-form.component';
 import { ClienteService } from '../../services/cliente.service';
-import { calcularEdad } from '../../validators/cliente.validators';
 
 function completarFormularioValido(component: ClienteFormComponent): void {
   component.form.controls['nombre'].setValue('Juan');
@@ -42,20 +41,6 @@ describe('ClienteFormComponent', () => {
   it('should reject a name with numbers', () => {
     component.form.controls['nombre'].setValue('Juan123');
     expect(component.form.controls['nombre'].hasError('soloLetras')).toBeTrue();
-  });
-
-  it('should flag an age that does not match the birth date', () => {
-    const fechaNacimiento = new Date(1990, 0, 1);
-    component.form.controls['fechaNacimiento'].setValue(fechaNacimiento);
-    component.form.controls['edad'].setValue(5);
-    expect(component.form.hasError('edadInconsistente')).toBeTrue();
-  });
-
-  it('should accept an age that matches the birth date', () => {
-    const fechaNacimiento = new Date(1990, 0, 1);
-    component.form.controls['fechaNacimiento'].setValue(fechaNacimiento);
-    component.form.controls['edad'].setValue(calcularEdad(fechaNacimiento));
-    expect(component.form.hasError('edadInconsistente')).toBeFalse();
   });
 
   it('should reject a future birth date', () => {

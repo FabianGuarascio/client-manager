@@ -23,15 +23,3 @@ export const fechaNoFuturaValidator: ValidatorFn = (
   return fecha.getTime() > Date.now() ? { fechaFutura: true } : null;
 };
 
-/** Calcula la edad en años completos a partir de una fecha de nacimiento. */
-export function calcularEdad(fechaNacimiento: Date): number {
-  const hoy = new Date();
-  let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
-  const aunNoCumplioEsteAnio =
-    hoy.getMonth() < fechaNacimiento.getMonth() ||
-    (hoy.getMonth() === fechaNacimiento.getMonth() && hoy.getDate() < fechaNacimiento.getDate());
-  if (aunNoCumplioEsteAnio) {
-    edad--;
-  }
-  return edad;
-}
