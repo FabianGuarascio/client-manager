@@ -24,17 +24,20 @@ export class ClienteFiltrosComponent {
   private edadDesde: number | null = null;
   private edadHasta: number | null = null;
 
-  aplicarTexto(valor: string): void {
+  aplicarTexto(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value;
     this.texto = valor.trim().toLowerCase();
     this.emitirFiltro();
   }
 
-  aplicarEdadDesde(valor: string): void {
+  aplicarEdadDesde(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value;
     this.edadDesde = valor === '' ? null : Number(valor);
     this.emitirFiltro();
   }
 
-  aplicarEdadHasta(valor: string): void {
+  aplicarEdadHasta(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value;
     this.edadHasta = valor === '' ? null : Number(valor);
     this.emitirFiltro();
   }
